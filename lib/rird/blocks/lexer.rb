@@ -20,8 +20,11 @@ module Rird
       end
 
       def unread(line, raw: false)
-        return nil if line.tag == :eof
-        line = match(line) if raw
+        if raw
+          line = match(line)
+        else
+          return nil if line.tag == :eof
+        end
         @buf.push line
         nil
       end
