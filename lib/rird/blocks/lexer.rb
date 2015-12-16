@@ -1,6 +1,10 @@
 module Rird
   module Blocks
-    Line = Struct.new(:string, :lineno, :tag, :lead_space, :headchar, :inner_space)
+    Line = Struct.new(:string, :lineno, :tag, :lead_space, :headchar, :inner_space) do
+      def inner_indent
+        "#{lead_space}#{' ' * headchar.size}#{inner_space}"
+      end
+    end
 
     class Lexer
       def initialize(src, filename, initial_lineno = 1)
@@ -12,7 +16,14 @@ module Rird
       end
 
       def read
-        @enum.next
+        @buf.empty? ? @enum.next : @buf.pop
+      end
+
+      def unread(line, raw: false)
+        return nil if line.tag == :eof
+        line = match(line) if raw
+        @buf.push line
+        nil
       end
 
       private
