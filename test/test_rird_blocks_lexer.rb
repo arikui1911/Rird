@@ -12,9 +12,14 @@ class TestRirdBlocksLexer < Test::Unit::TestCase
       lead_space  == :empty ? assert_empty(line.lead_space)  : assert_equal(lead_space,  line.lead_space)
       headchar    == :empty ? assert_empty(line.headchar)    : assert_equal(headchar,    line.headchar)
       inner_space == :empty ? assert_empty(line.inner_space) : assert_equal(inner_space, line.inner_space)
-      assert_equal(:eof, lexer.read.tag) if is_next_eof
+      assert_eof(lexer) if is_next_eof
       true
     end
+  end
+
+  def assert_eof(lexer)
+    assert_equal :eof, lexer.read.tag
+    true
   end
 
   def test_whiteline
@@ -73,6 +78,19 @@ class TestRirdBlocksLexer < Test::Unit::TestCase
 
   def test_stringline_verbatim
     lexer = Rird::Blocks::Lexer.new("  stringline\n", "(test)")
+    assert_line lexer, "  stringline\n", :stringline, lead_space: "  "
+  end
+
+  def test_unread
+    lexer = Rird::Blocks::Lexer.new("  stringline\n", "(test)")
+    line = lexer.read
+    lexer.unread line
+    assert_line lexer, "  stringline\n", :stringline, lead_space: "  "
+  end
+
+  def test_unread_raw
+    lexer = Rird::Blocks::Lexer.new("", "(test)")
+    lexer.unread "  stringline\n", raw: true
     assert_line lexer, "  stringline\n", :stringline, lead_space: "  "
   end
 end
