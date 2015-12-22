@@ -17,6 +17,8 @@ module Rird
         @buf      = []
       end
 
+      attr_reader :filename
+
       def read
         @buf.empty? ? @enum.next : @buf.pop
       end
