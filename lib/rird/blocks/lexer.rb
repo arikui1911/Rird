@@ -7,6 +7,8 @@ module Rird
     end
 
     class Lexer
+      include Enumerable
+
       def initialize(src, filename, initial_lineno = 1)
         @src      = src
         @filename = filename
@@ -27,6 +29,20 @@ module Rird
         end
         @buf.push line
         nil
+      end
+
+      def peek
+        @buf.empty? ? read().tap{|line| unread line } : @buf.last
+      end
+
+      def each
+        return enum_for(__method__) unless block_given?
+        loop do
+          line = peek()
+          break if line.tag == :eof
+          yield line
+          read
+        end
       end
 
       private
