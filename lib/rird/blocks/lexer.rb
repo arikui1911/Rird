@@ -47,7 +47,7 @@ module Rird
         comment:    /^#/,
         headline1:  /^(?<headchar>={1,4})(?!=)\s*\S/,
         headline2:  /^(?<headchar>\+{1,2})(?!\+)\s*\S/,
-        include:    /^<<<\s*\S/,
+        include:    /^(?<headchar><<<)\s*\S/,
         itemlist:   /^(?<lead_space>\s*)(?<headchar>\*)(?<inner_space>\s*)\S/,
         enumlist:   /^(?<lead_space>\s*)(?<headchar>\(\d+\))(?<inner_space>\s*)\S/,
         desclist:   /^(?<lead_space>\s*)(?<headchar>:)(?<inner_space>\s*)\S/,
@@ -61,7 +61,7 @@ module Rird
           if m = re.match(raw_line)
             line.tag = tag
             case tag
-            when :headline1, :headline2
+            when :headline1, :headline2, :include
               line.headchar = m["headchar"]
             when :itemlist, :enumlist, :desclist, :methodlist
               line.lead_space = m["lead_space"]

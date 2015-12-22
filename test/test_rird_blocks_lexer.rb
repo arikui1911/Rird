@@ -48,7 +48,7 @@ class TestRirdBlocksLexer < Test::Unit::TestCase
 
   def test_include
     lexer = Rird::Blocks::Lexer.new("<<< inc\n", "(test)")
-    assert_line lexer, "<<< inc\n", :include
+    assert_line lexer, "<<< inc\n", :include, headchar: "<<<"
   end
 
   def test_itemlist
